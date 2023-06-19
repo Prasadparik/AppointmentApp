@@ -1,5 +1,5 @@
 // API BASE URL
-let APICode = "a86ef64adc2e41488d520658dd17ce7a";
+let APICode = "945dbf7b9b084b66b58743366c2fbd19";
 const BaseUrl = `https://crudcrud.com/api/${APICode}/AppointmentData`;
 
 // ===========================================
@@ -47,10 +47,10 @@ function AddNewUser(e) {
 
   //   create Edit btn =================================
 
-  let EditBtn = document.createElement("edit");
-  EditBtn.className = "float-end btn bg-dark text-white me-1 edit";
-  EditBtn.appendChild(document.createTextNode("Edit"));
-  li.appendChild(EditBtn);
+  //   let EditBtn = document.createElement("edit");
+  //   EditBtn.className = "float-end btn bg-dark text-white me-1 edit";
+  //   EditBtn.appendChild(document.createTextNode("Edit"));
+  //   li.appendChild(EditBtn);
 
   List.appendChild(li);
 
@@ -68,6 +68,7 @@ function AddNewUser(e) {
   axios
     .post(BaseUrl, userObj)
     .then((resolve) => console.log(resolve))
+    .then((resolve) => window.location.reload())
     .catch((err) => console.log(err));
 
   //   Clear input fields
@@ -148,12 +149,24 @@ function editItem(e) {
 
   //   getting user from local storage
 
-  let obj = JSON.parse(localStorage.getItem(li.childNodes[2].innerText));
-  console.log("OBJ:", obj);
+  //   let obj = JSON.parse(localStorage.getItem(li.childNodes[2].innerText));
+  console.log("OBJ:", li.childNodes);
 
-  //   filling input values
-  form.userName.value = obj.name;
-  form.userEmail.value = obj.email;
+  // get user from API ================================
+
+  axios
+    .get(BaseUrl + "/" + li.childNodes[4].innerText)
+    .then((resolve) => {
+      // filling input values
+      form.userName.value = resolve.data.name;
+      form.userEmail.value = resolve.data.email;
+    })
+    .catch((err) => console.log(err));
+
+  // Deleting user from api
+  //   remove user from API
+
+  axios.delete(`${BaseUrl}/${li.childNodes[4].innerText}`);
 
   List.removeChild(li);
 
