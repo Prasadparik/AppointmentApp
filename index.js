@@ -1,3 +1,9 @@
+// API BASE URL
+let APICode = "a86ef64adc2e41488d520658dd17ce7a";
+const BaseUrl = `https://crudcrud.com/api/${APICode}/AppointmentData`;
+
+// ===========================================
+
 let form = document.getElementById("AddForm");
 let List = document.getElementById("List");
 
@@ -27,10 +33,10 @@ function AddNewUser(e) {
 
   //   Add UID to user =====================================
 
-  let UID = document.createElement("id");
-  UID.style.display = "none";
-  UID.appendChild(document.createTextNode(userEmail));
-  li.appendChild(UID);
+  //   let UID = document.createElement("id");
+  //   UID.style.display = "none";
+  //   UID.appendChild(document.createTextNode(userEmail));
+  //   li.appendChild(UID);
 
   //   create Delete btn =================================
 
@@ -60,10 +66,7 @@ function AddNewUser(e) {
 
   //   Add to CRUD CRUD API
   axios
-    .post(
-      "https://crudcrud.com/api/a86ef64adc2e41488d520658dd17ce7a/AppointmentData",
-      userObj
-    )
+    .post(BaseUrl, userObj)
     .then((resolve) => console.log(resolve))
     .catch((err) => console.log(err));
 
@@ -72,12 +75,63 @@ function AddNewUser(e) {
   form.userEmail.value = "";
 }
 
+// Get Users From API ========================
+
+let Data;
+axios
+  .get(BaseUrl)
+  .then((resolve) => ShowData(resolve))
+  .catch((err) => console.log(err));
+
+function ShowData(APIData) {
+  let data = APIData.data;
+
+  //   for Loop
+
+  data.forEach((user) => {
+    console.log(user);
+    let li = document.createElement("li");
+    li.className = "list-group-item p-2";
+
+    li.appendChild(document.createTextNode(`${user.name} `));
+    li.appendChild(document.createTextNode(`${user.email}`));
+
+    //   create Delete btn =================================
+
+    let deleteBtn = document.createElement("delete");
+    deleteBtn.className = "float-end btn bg-danger text-white delete";
+    deleteBtn.appendChild(document.createTextNode("Delete"));
+    li.appendChild(deleteBtn);
+
+    //   create Edit btn =================================
+
+    let EditBtn = document.createElement("edit");
+    EditBtn.className = "float-end btn bg-dark text-white me-1 edit";
+    EditBtn.appendChild(document.createTextNode("Edit"));
+    li.appendChild(EditBtn);
+
+    //   Add UID to user =====================================
+
+    let UID = document.createElement("id");
+    UID.style.display = "none";
+    UID.appendChild(document.createTextNode(user._id));
+    li.appendChild(UID);
+
+    List.appendChild(li);
+  });
+}
+
 // Delete Item ===============================
 
 function deleteItem(e) {
   if (e.target.classList.contains("delete"))
     if (confirm("Are you sure you want to delete ?"))
       var li = e.target.parentElement;
+
+  //   remove user from API
+
+  axios.delete(`${BaseUrl}/${li.childNodes[4].innerText}`);
+
   List.removeChild(li);
 
   //   removing item from local storage
