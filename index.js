@@ -1,6 +1,15 @@
 // API BASE URL
-let APICode = "945dbf7b9b084b66b58743366c2fbd19";
-const BaseUrl = `https://crudcrud.com/api/${APICode}/AppointmentData`;
+let APICode = "ec5aedc3dc1a41e89106f8430f3d673a";
+// const BaseUrl = `https://crudcrud.com/api/${APICode}/AppointmentData`;
+
+// -------------------------------------------------------
+const BaseUrl = `http://localhost:8000/api/users`;
+axios
+  .get(BaseUrl)
+  .then((res) => {
+    console.log("LOCAL API::", res);
+  })
+  .catch((err) => console.log("ERROR::", err));
 
 // ===========================================
 
@@ -55,18 +64,19 @@ function AddNewUser(e) {
   List.appendChild(li);
 
   //   Adding user to localStorage
-
-  let userObj = {
-    name: userName,
-    email: userEmail,
-  };
+  let name = userName;
+  let email = userEmail;
+  let userObj = { name, email };
 
   let Json_UserObj = JSON.stringify(userObj);
   localStorage.setItem(userEmail, Json_UserObj);
 
+  console.log("POST OBJ => ", userObj);
+  console.log("POST JSON OBJ => ", Json_UserObj);
+
   //   Add to CRUD CRUD API
   axios
-    .post(BaseUrl, userObj)
+    .post(BaseUrl, Json_UserObj)
     .then((resolve) => console.log(resolve))
     .then((resolve) => window.location.reload())
     .catch((err) => console.log(err));
@@ -81,7 +91,10 @@ function AddNewUser(e) {
 let Data;
 axios
   .get(BaseUrl)
-  .then((resolve) => ShowData(resolve))
+  .then((resolve) => {
+    console.log("CRUD API::", resolve);
+    ShowData(resolve);
+  })
   .catch((err) => console.log(err));
 
 function ShowData(APIData) {
